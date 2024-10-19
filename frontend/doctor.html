@@ -1,0 +1,40 @@
+<!-- frontend/doctor.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin - Manage Doctors</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <h1>Admin Dashboard - Doctor Management</h1>
+
+  <!-- Form to add a new doctor -->
+  <form id="addDoctorForm">
+    <input type="text" id="firstName" placeholder="First Name" required>
+    <input type="text" id="lastName" placeholder="Last Name" required>
+    <input type="text" id="specialization" placeholder="Specialization" required>
+    <input type="text" id="availability" placeholder="Availability" required>
+    <button type="submit">Add Doctor</button>
+  </form>
+
+  <!-- Button to fetch all patients -->
+  <button id="viewPatientsBtn">View Patients</button>
+
+  <!-- Table to display all patients -->
+  <table id="patientsTable" style="display:none;">
+    <thead>
+      <tr>
+        <th>Patient ID</th>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Email</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script src="script.js"></script>
+</body>
+</html>

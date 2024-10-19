@@ -3,11 +3,16 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const db = require('../database');
 const router = express.Router();
-const { authenticateToken } = require('../middleware/auth');
+const { authenticateToken } = require('../middleware/auth'); // Make sure this import is correct
 
 // Register a new patient
 router.post('/register', (req, res) => {
   const { first_name, last_name, email, password, phone, date_of_birth, gender, address } = req.body;
+
+  if (!first_name || !last_name || !email || !password) {
+    return res.status(400).json({ error: 'All fields are required' });
+  }
+
   const password_hash = bcrypt.hashSync(password, 10);
 
   db.query(
@@ -42,7 +47,7 @@ router.get('/profile', authenticateToken, (req, res) => {
   const { patientId } = req.user;
 
   db.query('SELECT first_name, last_name, email, phone, date_of_birth, gender, address FROM patients WHERE id = ?', [patientId], (err, results) => {
-    if (err) return res.status(500).json({ error: err });
+    if (err || results.length === 0) return res.status(404).json({ error: 'Patient not found' });
     res.json(results[0]);
   });
 });
