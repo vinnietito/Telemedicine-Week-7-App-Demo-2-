@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <header>
+            <h1>Welcome, <span id="patient-name">John Doe</span>!</h1>
+            <button onclick="logout()">Logout</button>
+        </header>
+
+        <nav>
+            <ul>
+                <li><a href="#" onclick="showSection('profile')">Profile</a></li>
+                <li><a href="#" onclick="showSection('appointments')">Appointments</a></li>
+                <li><a href="#" onclick="showSection('history')">Appointment History</a></li>
+                <li><a href="#" onclick="showSection('locator')">Health Center Locator</a></li>
+                <li><a href="#" onclick="showSection('messages')">Messages</a></li>
+            </ul>
+        </nav>
+
+        <main>
+            <div id="profile" class="section">
+                <h2>Profile Overview</h2>
+                <p>Email: <span id="patient-email">john.doe@example.com</span></p>
+                <p>Phone: <span id="patient-phone">123-456-7890</span></p>
+                <p>Date of Birth: <span id="patient-dob">01/01/1990</span></p>
+                <p>Gender: <span id="patient-gender">Male</span></p>
+                <button onclick="editProfile()">Edit Profile</button>
+            </div>
+
+            <div id="appointments" class="section" style="display:none;">
+                <h2>Upcoming Appointments</h2>
+                <ul id="upcoming-appointments">
+                    <li>Doctor: Dr. Smith | Date: 10/30/2024 | Time: 10:00 AM <button onclick="cancelAppointment(1)">Cancel</button></li>
+                    <li>Doctor: Dr. Jane | Date: 11/05/2024 | Time: 2:00 PM <button onclick="cancelAppointment(2)">Cancel</button></li>
+                </ul>
+                <button onclick="bookAppointment()">Book New Appointment</button>
+            </div>
+
+            <div id="history" class="section" style="display:none;">
+                <h2>Appointment History</h2>
+                <ul id="appointment-history">
+                    <li>Doctor: Dr. Smith | Date: 09/15/2024 | Notes: Follow-up visit</li>
+                    <li>Doctor: Dr. Jane | Date: 08/10/2024 | Notes: Initial consultation</li>
+                </ul>
+            </div>
+
+            <div id="locator" class="section" style="display:none;">
+                <h2>Health Center Locator</h2>
+                <input type="text" id="location" placeholder="Enter your location" />
+                <button onclick="findHealthCenters()">Find Health Centers</button>
+                <div id="map" style="height: 300px;"></div> <!-- Placeholder for map -->
+            </div>
+
+            <div id="messages" class="section" style="display:none;">
+                <h2>Messages</h2>
+                <div id="message-list">
+                    <p>No new messages.</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Simulated patient data
+const patientData = {
+    name: 'John Doe',
+    email: 'john.doe@example.com',
+    phone: '123-456-7890',
+    dob: '01/01/1990',
+    gender: 'Male',
+};
+
+// Initialize dashboard
+function initDashboard() {
+    document.getElementById('patient-name').innerText = patientData.name;
+    document.getElementById('patient-email').innerText = patientData.email;
+    document.getElementById('patient-phone').innerText = patientData.phone;
+    document.getElementById('patient-dob').innerText = patientData.dob;
+    document.getElementById('patient-gender').innerText = patientData.gender;
+}
+
+// Show selected section
+function showSection(section) {
+    const sections = document.querySelectorAll('.section');
+    sections.forEach((sec) => {
+        sec.style.display = 'none';
+    });
+    document.getElementById(section).style.display = 'block';
+}
+
+// Logout function (simulated)
+function logout() {
+    alert('You have been logged out.');
+    window.location.href = 'login.html'; // Redirect to login
+}
+
+// Edit Profile function (simulated)
+function editProfile() {
+    alert('Edit profile functionality goes here.');
+}
+
+// Cancel Appointment function (simulated)
+function cancelAppointment(appointmentId) {
+    alert(`Appointment ${appointmentId} canceled.`);
+}
+
+// Book Appointment function (simulated)
+function bookAppointment() {
+    alert('Redirecting to booking page...');
+}
+
+// Find Health Centers function (simulated)
+function findHealthCenters() {
+    const location = document.getElementById('location').value;
+    alert(`Finding health centers near ${location}...`);
+}
+
+// Initialize the dashboard on page load
+window.onload = initDashboard;
+
+    </script>
+
+    <style>
+        body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+}
+
+.dashboard-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+nav {
+    margin: 20px 0;
+}
+
+nav ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+nav ul li {
+    display: inline;
+    margin-right: 20px;
+}
+
+nav a {
+    text-decoration: none;
+    color: #007BFF;
+}
+
+.section {
+    margin-top: 20px;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+button {
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+    </style>
+</body>
+</html>

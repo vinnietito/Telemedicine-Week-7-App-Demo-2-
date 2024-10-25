@@ -1,16 +1,16 @@
 // frontend/script.js
 
-document.getElementById('addDoctorForm').addEventListener('submit', function (e) {
+document.getElementById('addDoctorForm').addEventListener('submit', async function (e) {
     e.preventDefault();
     
     const doctorData = {
       firstName: document.getElementById('firstName').value,
       lastName: document.getElementById('lastName').value,
       specialization: document.getElementById('specialization').value,
-      availability: document.getElementById('availability').value,
+      availability: document.getElementById('availability').value
     };
   
-    fetch('/admin/add-doctor', {
+   await fetch('/admin/add-doctor', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -23,8 +23,8 @@ document.getElementById('addDoctorForm').addEventListener('submit', function (e)
       .catch(error => console.error('Error:', error));
   });
   
-  document.getElementById('viewPatientsBtn').addEventListener('click', function () {
-    fetch('/admin/patients', {
+  document.getElementById('viewPatientsBtn').addEventListener('click', async function () {
+    await fetch('/admin/patients', {
       headers: {
         'Authorization': `Bearer ${localStorage.getItem('token')}`
       }
