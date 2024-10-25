@@ -4,7 +4,61 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login and Registration</title>
-    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .form-container {
+            background-color: white;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #28a745;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        .toggle-link {
+            margin-top: 10px;
+            text-align: center;
+            cursor: pointer;
+            color: #007bff;
+        }
+        .error {
+            color: red;
+            font-size: 0.8em;
+        }
+    </style>
 </head>
 <body>
 
@@ -73,11 +127,10 @@
             <button type="button" onclick="register()">Register</button>
             <div class="toggle-link" onclick="showLogin()">Already have an account? Log in here</div>
         </div>
-        
+    </div>
 
     <script>
-        // Regular expression for email validation
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const apiUrl = 'http://localhost:3000/api'; // Change this to your backend URL
 
         // Switch from login to register form
         function showRegister() {
@@ -91,135 +144,98 @@
             document.getElementById('login-form').style.display = 'block';
         }
 
-        function validateEmail(email) {
-            return emailRegex.test(email);
-        }
-
-        function login() {
+        async function login() {
             const email = document.getElementById('login-email').value;
             const password = document.getElementById('login-password').value;
-            const emailError = document.getElementById('login-email-error');
-            const passwordError = document.getElementById('login-password-error');
 
-            emailError.textContent = '';
-            passwordError.textContent = '';
+            // Clear previous error messages
+            document.getElementById('login-email-error').textContent = '';
+            document.getElementById('login-password-error').textContent = '';
 
-            let valid = true;
-
-            if (!validateEmail(email)) {
-                emailError.textContent = 'Invalid email format';
-                valid = false;
+            // Basic validation
+            if (!email) {
+                document.getElementById('login-email-error').textContent = 'Email is required.';
+                return;
             }
-            if (password.length < 8) {
-                passwordError.textContent = 'Password must be at least 8 characters';
-                valid = false;
+            if (!password) {
+                document.getElementById('login-password-error').textContent = 'Password is required.';
+                return;
             }
 
-            if (valid) {
-                alert(`Logged in with email: ${email}`);
+            try {
+                const response = await fetch(`${apiUrl}/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || 'Login failed');
+                }
+
+                const result = await response.json();
+                alert(`Logged in successfully: ${result.message}`);
+                // Redirect or perform further actions here
+            } catch (error) {
+                alert(error.message);
             }
         }
 
-        function register() {
-            const name = document.getElementById('reg-name').value;
+        async function register() {
+            const firstName = document.getElementById('reg-first-name').value;
+            const lastName = document.getElementById('reg-last-name').value;
             const email = document.getElementById('reg-email').value;
             const password = document.getElementById('reg-password').value;
-            const confirmPassword = document.getElementById('confirm-password').value;
+            const phoneNumber = document.getElementById('phone-number').value;
+            const dob = document.getElementById('dob').value;
+            const gender = document.getElementById('gender').value;
 
-            const nameError = document.getElementById('reg-name-error');
-            const emailError = document.getElementById('reg-email-error');
-            const passwordError = document.getElementById('reg-password-error');
-            const confirmPasswordError = document.getElementById('confirm-password-error');
+            // Clear previous error messages
+            document.getElementById('reg-first-name-error').textContent = '';
+            document.getElementById('reg-last-name-error').textContent = '';
+            document.getElementById('reg-email-error').textContent = '';
+            document.getElementById('reg-password-error').textContent = '';
+            document.getElementById('phone-number-error').textContent = '';
+            document.getElementById('dob-error').textContent = '';
+            document.getElementById('gender-error').textContent = '';
 
-            nameError.textContent = '';
-            emailError.textContent = '';
-            passwordError.textContent = '';
-            confirmPasswordError.textContent = '';
-
-            let valid = true;
-
-            if (name.trim() === '') {
-                nameError.textContent = 'Name is required';
-                valid = false;
-            }
-            if (!validateEmail(email)) {
-                emailError.textContent = 'Invalid email format';
-                valid = false;
-            }
-            if (password.length < 8) {
-                passwordError.textContent = 'Password must be at least 8 characters';
-                valid = false;
-            }
-            if (password !== confirmPassword) {
-                confirmPasswordError.textContent = 'Passwords do not match';
-                valid = false;
+            // Basic validation
+            if (!firstName || !lastName || !email || !password || !phoneNumber || !dob || !gender) {
+                if (!firstName) document.getElementById('reg-first-name-error').textContent = 'First name is required.';
+                if (!lastName) document.getElementById('reg-last-name-error').textContent = 'Last name is required.';
+                if (!email) document.getElementById('reg-email-error').textContent = 'Email is required.';
+                if (!password) document.getElementById('reg-password-error').textContent = 'Password is required.';
+                if (!phoneNumber) document.getElementById('phone-number-error').textContent = 'Phone number is required.';
+                if (!dob) document.getElementById('dob-error').textContent = 'Date of birth is required.';
+                if (!gender) document.getElementById('gender-error').textContent = 'Gender is required.';
+                return;
             }
 
-            if (valid) {
-                alert(`Registered successfully with email: ${email}`);
+            try {
+                const response = await fetch(`${apiUrl}/register`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ firstName, lastName, email, password, phoneNumber, dob, gender })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || 'Registration failed');
+                }
+
+                const result = await response.json();
+                alert(`Registered successfully: ${result.message}`);
+                // Redirect or perform further actions here
+            } catch (error) {
+                alert(error.message);
             }
         }
     </script>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-        .form-container {
-            background-color: white;
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 300px;
-        }
-        .form-group {
-            margin-bottom: 1rem;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-        }
-        .form-group input {
-            width: 100%;
-            padding: 0.5rem;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-        button {
-            width: 100%;
-            padding: 0.5rem;
-            background-color: #007BFF;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        .toggle-link {
-            text-align: center;
-            margin-top: 10px;
-            cursor: pointer;
-            color: #007BFF;
-            text-decoration: underline;
-        }
-        .toggle-link:hover {
-            color: #0056b3;
-        }
-        .error {
-            color: red;
-            font-size: 0.9rem;
-            margin-top: 0.5rem;
-        }
-    </style>
 
 </body>
 </html>

@@ -8,17 +8,17 @@ const doctorRoutes = require('./routes/doctorRoutes');
 const appointmentRoutes = require('./routes/appointmentRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const authRoutes = require('./routes/authRoutes');
-const bcrypt = require('bcrypt');
+const connection = require('./database');
 require('dotenv').config();
 
-const connection = require('./database');
 const app = express();
 
 // Middleware
 app.use(cors({
-    origin: 'http://localhost:3000',
+    origin: 'http://localhost:3000', // Update this to your frontend URL if needed
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization']
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true // Enable credentials for cookie support
 }));
 
 app.use(bodyParser.json());
@@ -37,10 +37,10 @@ app.get('/login', (req, res) => {
 });
 
 // Routes
-app.use('/patients', patientRoutes);
-app.use('/doctors', doctorRoutes);
-app.use('/appointments', appointmentRoutes);
-app.use('/admin', adminRoutes);
+app.use('/api/patients', patientRoutes);
+app.use('/api/doctors', doctorRoutes);
+app.use('/api/appointments', appointmentRoutes);
+app.use('/api/admin', adminRoutes);
 app.use('/api/auth', authRoutes);
 
 // Catch-All Route
