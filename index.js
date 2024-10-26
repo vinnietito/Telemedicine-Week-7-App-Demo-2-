@@ -3,12 +3,6 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const path = require('path');
-const patientRoutes = require('./routes/patientRoutes');
-const doctorRoutes = require('./routes/doctorRoutes');
-const appointmentRoutes = require('./routes/appointmentRoutes');
-const adminRoutes = require('./routes/adminRoutes');
-const authRoutes = require('./routes/authRoutes');
-const connection = require('./database');
 require('dotenv').config();
 
 const app = express();
@@ -36,12 +30,41 @@ app.get('/login', (req, res) => {
     res.sendFile(path.join(__dirname, 'frontend', 'login.html'));
 });
 
-// Routes
-app.use('/api/patients', patientRoutes);
-app.use('/api/doctors', doctorRoutes);
-app.use('/api/appointments', appointmentRoutes);
-app.use('/api/admin', adminRoutes);
-app.use('/api/auth', authRoutes);
+// API route for registering a patient
+app.post('/api/patients/register', (req, res) => {
+    const { firstName, lastName, email, password, phoneNumber, dob, gender } = req.body;
+
+    // Simulate a database save operation
+    console.log(`Registering patient with Email: ${email}`);
+
+    // Prepare a JSON response
+    const response = { message: 'Patient registered successfully!' };
+    console.log('Response:', JSON.stringify(response)); // Log the response
+
+    // Send a success response (you can implement actual database logic here)
+    res.status(201).json(response);
+});
+
+// API route for logging in a patient
+app.post('/api/patients/login', (req, res) => {
+    const { email, password } = req.body;
+
+    // Simulate a login operation (replace with actual authentication logic)
+    console.log(`Logging in patient with Email: ${email}`);
+    
+    // For demonstration, let's assume the login is always successful
+    const response = { message: 'Login successful!' };
+    console.log('Response:', JSON.stringify(response)); // Log the response
+
+    // Send a success response
+    res.status(200).json(response);
+});
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+    console.error(err.stack); // Log the error stack
+    res.status(500).json({ error: 'Something went wrong!' }); // Return a JSON response
+});
 
 // Catch-All Route
 app.use((req, res) => {

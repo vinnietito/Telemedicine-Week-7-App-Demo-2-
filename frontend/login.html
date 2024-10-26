@@ -36,6 +36,10 @@
             border: 1px solid #ccc;
             border-radius: 4px;
         }
+        .form-group .error {
+            color: red;
+            font-size: 0.8rem;
+        }
         button {
             background-color: #28a745;
             color: white;
@@ -54,15 +58,10 @@
             cursor: pointer;
             color: #007bff;
         }
-        .error {
-            color: red;
-            font-size: 0.8em;
-        }
     </style>
 </head>
 <body>
 
-    <!-- Form Container -->
     <div class="form-container">
         <!-- Login Form (Initially Visible) -->
         <div id="login-form">
@@ -132,55 +131,67 @@
     <script>
         const apiUrl = 'http://localhost:3000/api'; // Change this to your backend URL
 
-        // Switch from login to register form
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
         function showRegister() {
             document.getElementById('login-form').style.display = 'none';
             document.getElementById('registration-form').style.display = 'block';
         }
 
-        // Switch from register to login form
         function showLogin() {
             document.getElementById('registration-form').style.display = 'none';
             document.getElementById('login-form').style.display = 'block';
         }
 
+        function validateEmail(email) {
+            return emailRegex.test(email);
+        }
+
         async function login() {
             const email = document.getElementById('login-email').value;
             const password = document.getElementById('login-password').value;
+            const emailError = document.getElementById('login-email-error');
+            const passwordError = document.getElementById('login-password-error');
 
-            // Clear previous error messages
-            document.getElementById('login-email-error').textContent = '';
-            document.getElementById('login-password-error').textContent = '';
+            emailError.textContent = '';
+            passwordError.textContent = '';
 
-            // Basic validation
-            if (!email) {
-                document.getElementById('login-email-error').textContent = 'Email is required.';
-                return;
+            let valid = true;
+
+            if (!validateEmail(email)) {
+                emailError.textContent = 'Invalid email format';
+                valid = false;
             }
-            if (!password) {
-                document.getElementById('login-password-error').textContent = 'Password is required.';
-                return;
+            if (password.length < 8) {
+                passwordError.textContent = 'Password must be at least 8 characters';
+                valid = false;
             }
 
-            try {
-                const response = await fetch(`${apiUrl}/login`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ email, password })
-                });
+            if (valid) {
+                try {
+                    const response = await fetch(`${apiUrl}/login`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ email, password })
+                    });
 
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.message || 'Login failed');
+                    if (response.status === 404) {
+                        throw new Error('User does not exist'); // Check if user exists
+                    }
+
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.message || 'Login failed');
+                    }
+
+                    const result = await response.json();
+                    alert(`Logged in successfully: ${result.message}`);
+                    // Handle successful login (e.g., redirect or store token)
+                } catch (error) {
+                    alert(error.message);
                 }
-
-                const result = await response.json();
-                alert(`Logged in successfully: ${result.message}`);
-                // Redirect or perform further actions here
-            } catch (error) {
-                alert(error.message);
             }
         }
 
@@ -193,49 +204,60 @@
             const dob = document.getElementById('dob').value;
             const gender = document.getElementById('gender').value;
 
-            // Clear previous error messages
-            document.getElementById('reg-first-name-error').textContent = '';
-            document.getElementById('reg-last-name-error').textContent = '';
-            document.getElementById('reg-email-error').textContent = '';
-            document.getElementById('reg-password-error').textContent = '';
-            document.getElementById('phone-number-error').textContent = '';
-            document.getElementById('dob-error').textContent = '';
-            document.getElementById('gender-error').textContent = '';
+            const nameError = document.getElementById('reg-name-error');
+            const emailError = document.getElementById('reg-email-error');
+            const passwordError = document.getElementById('reg-password-error');
 
-            // Basic validation
-            if (!firstName || !lastName || !email || !password || !phoneNumber || !dob || !gender) {
-                if (!firstName) document.getElementById('reg-first-name-error').textContent = 'First name is required.';
-                if (!lastName) document.getElementById('reg-last-name-error').textContent = 'Last name is required.';
-                if (!email) document.getElementById('reg-email-error').textContent = 'Email is required.';
-                if (!password) document.getElementById('reg-password-error').textContent = 'Password is required.';
-                if (!phoneNumber) document.getElementById('phone-number-error').textContent = 'Phone number is required.';
-                if (!dob) document.getElementById('dob-error').textContent = 'Date of birth is required.';
-                if (!gender) document.getElementById('gender-error').textContent = 'Gender is required.';
-                return;
+            nameError.textContent = '';
+            emailError.textContent = '';
+            passwordError.textContent = '';
+
+            let valid = true;
+
+            if (firstName.trim() === '') {
+                nameError.textContent = 'First Name is required';
+                valid = false;
+            }
+            if (lastName.trim() === '') {
+                nameError.textContent = 'Last Name is required';
+                valid = false;
+            }
+            if (!validateEmail(email)) {
+                emailError.textContent = 'Invalid email format';
+                valid = false;
+            }
+            if (password.length < 8) {
+                passwordError.textContent = 'Password must be at least 8 characters';
+                valid = false;
             }
 
-            try {
-                const response = await fetch(`${apiUrl}/register`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ firstName, lastName, email, password, phoneNumber, dob, gender })
-                });
+            if (valid) {
+                try {
+                    const response = await fetch(`${apiUrl}/register`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ firstName, lastName, email, password, phoneNumber, dob, gender })
+                    });
 
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.message || 'Registration failed');
+                    if (response.status === 409) {
+                        throw new Error('User already exists'); // Check if user already exists
+                    }
+
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.message || 'Registration failed');
+                    }
+
+                    const result = await response.json();
+                    alert(`Registration successful: ${result.message}`);
+                    showLogin(); // Switch to login form after successful registration
+                } catch (error) {
+                    alert(error.message);
                 }
-
-                const result = await response.json();
-                alert(`Registered successfully: ${result.message}`);
-                // Redirect or perform further actions here
-            } catch (error) {
-                alert(error.message);
             }
         }
     </script>
-
 </body>
 </html>
